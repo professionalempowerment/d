@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Search, Filter, Calendar } from 'lucide-react';
-import { supabase, type Event } from '../lib/supabase';
+import type { Event } from '../lib/firebase';
 import EventCard from './EventCard';
 
 interface JoinTabProps {
@@ -16,8 +16,6 @@ export default function JoinTab({
   onSearchChange,
   onCategoryChange,
 }: JoinTabProps) {
-  const [events, setEvents] = useState<Event[]>([]);
-  const [loading, setLoading] = useState(true);
   const [nowTime, setNowTime] = useState(Date.now());
   const [calendarAdded, setCalendarAdded] = useState<Record<string, boolean>>({});
 
@@ -28,26 +26,92 @@ export default function JoinTab({
     return () => clearInterval(t);
   }, []);
 
-  useEffect(() => {
-    fetchEvents();
-  }, []);
-
-  const fetchEvents = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('events')
-        .select('*')
-        .in('status', ['upcoming'])
-        .order('date', { ascending: true });
-
-      if (error) throw error;
-      setEvents(data || []);
-    } catch (error) {
-      console.error('Error fetching events:', error);
-    } finally {
-      setLoading(false);
+  const events: Event[] = [
+    {
+      id: '1',
+      title: 'The Advertising Summit',
+      category: 'business',
+      date: '2025-11-15',
+      time: '10:00 AM - 6:00 PM EAT',
+      location: 'Virtual Event',
+      organizer: 'Creative Arts Institute',
+      organizer_id: null,
+      image_url: 'https://tinuiti.com/wp-content/uploads/2024/12/2025-amazon-and-retail-media-summit-featured.webp?auto=compress&cs=tinysrgb&w=800',
+      description: 'A momentous occasion of advertising insights, creative strategies, and networking.',
+      price: 380000,
+      rating: 4.8,
+      features: ['Live Sessions', 'Networking', 'Certificates', 'Recordings'],
+      speakers: ['Sarah Johnson', 'Mike Chen', 'Emma Wilson'],
+      status: 'upcoming',
+      is_livestream: false,
+      livestream_url: null,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    },
+    {
+      id: '2',
+      title: 'Talent Show',
+      category: 'social',
+      date: '2025-11-20',
+      time: '7:00 PM - 10:00 PM EAT',
+      location: 'Kampala, Uganda',
+      organizer: 'Creative Collective',
+      organizer_id: null,
+      image_url: 'https://static.vecteezy.com/system/resources/thumbnails/035/924/440/small_2x/show-talent-podium-3d-retro-talent-show-podium-with-microphone-show-scene-stage-studio-or-room-vector.jpg',
+      description: 'Showcase your talent and compete for amazing prizes. Open to all creative professionals.',
+      price: 95000,
+      rating: 4.9,
+      features: ['Live Judging', 'Prizes', 'Networking', 'Media Coverage'],
+      speakers: ['Celebrity Judges Panel'],
+      status: 'upcoming',
+      is_livestream: false,
+      livestream_url: null,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    },
+    {
+      id: '3',
+      title: "The Patrons' Forum",
+      category: 'networking',
+      date: '2025-11-25',
+      time: '6:00 PM - 9:00 PM EAT',
+      location: 'Kampala, Uganda',
+      organizer: 'The Patrons',
+      organizer_id: null,
+      image_url: 'https://cassette.sphdigital.com.sg/image/thepeak/8895ea9e31e92e0644e57b997d762a1a209a9cbf171f5f3a9aed2e210c6d6333?auto=compress&cs=tinysrgb&w=800',
+      description: 'Recognition for Patrons contributions to the flourishing Arts.',
+      price: 285000,
+      rating: 4.7,
+      features: ['Networking', 'Panel Discussion', 'Cocktails', 'Business Cards'],
+      speakers: ['Dr. Maria Rodriguez', 'Jedi Martinez'],
+      status: 'upcoming',
+      is_livestream: false,
+      livestream_url: null,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    },
+    {
+      id: '4',
+      title: 'Brand Ambassador Masterclass',
+      category: 'business',
+      date: '2025-10-28',
+      time: '2:00 PM - 5:00 PM EAT',
+      location: 'Virtual Event',
+      organizer: 'Creative Arts Institute',
+      organizer_id: null,
+      image_url: 'https://images.pexels.com/photos/6285080/pexels-photo-6285080.jpeg?auto=compress&cs=tinysrgb&w=800',
+      description: 'Learn the secrets of successful brand ambassadorship from industry experts.',
+      price: 560000,
+      rating: 4.9,
+      features: ['Interactive Sessions', 'Case Studies', 'Q&A', 'Certificate'],
+      speakers: ['Ruby Nesda', 'Maya Chen'],
+      status: 'past',
+      is_livestream: false,
+      livestream_url: null,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
     }
-  };
+  ];
 
   const filteredEvents = events.filter((event) => {
     const matchesCategory = selectedCategory === 'all' || event.category === selectedCategory;
@@ -56,7 +120,7 @@ export default function JoinTab({
       event.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
       event.organizer.toLowerCase().includes(searchQuery.toLowerCase());
 
-    return matchesCategory && matchesSearch;
+    return matchesCategory && matchesSearch && event.status === 'upcoming';
   });
 
   const toggleCalendar = (eventId: string) => {
@@ -92,14 +156,6 @@ export default function JoinTab({
   const handleRegister = (eventId: string) => {
     alert('Registration functionality will be implemented with authentication.');
   };
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center py-12">
-        <div className="text-gray-300">Loading events...</div>
-      </div>
-    );
-  }
 
   return (
     <>

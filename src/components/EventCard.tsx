@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Calendar, MapPin, Clock, Ticket, Star, Share2 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
-import type { Event } from '../lib/supabase';
+import type { Event } from '../lib/firebase';
 
 interface EventCardProps {
   event: Event;
@@ -139,7 +139,7 @@ export default function EventCard({
 
           <div className="w-full h-2 bg-white/10 rounded-full overflow-hidden">
             <div
-              className="h-full bg-gradient-to-r from-rose-500 to-blue-600"
+              className="h-full bg-gradient-to-r from-rose-500 to-purple-600"
               style={{ width: `${Math.min(100, Math.max(6, 60))}%` }}
             />
           </div>
@@ -150,7 +150,7 @@ export default function EventCard({
             <div className="flex items-center space-x-3">
               <button
                 onClick={() => onRegister(event.id)}
-                className="flex-1 h-12 flex items-center justify-center px-4 font-semibold rounded-xl transition-all bg-gradient-to-r from-rose-500 to-blue-600 text-white hover:shadow-xl"
+                className="flex-1 h-12 flex items-center justify-center px-4 font-semibold rounded-lg transition-all bg-gradient-to-r from-rose-500 to-purple-600 text-white hover:shadow-lg"
               >
                 <Ticket className="w-5 h-5 mr-2 inline" />
                 Book Now
@@ -184,7 +184,7 @@ export default function EventCard({
                 <div className="flex items-center space-x-3">
                   <button
                     onClick={handleStreamNow}
-                    className="flex-1 h-12 flex items-center justify-center px-4 font-semibold rounded-xl transition-all bg-gradient-to-r from-rose-500 to-blue-600 text-white hover:shadow-xl animate-pulse"
+                    className="flex-1 h-12 flex items-center justify-center px-4 font-semibold rounded-lg transition-all bg-gradient-to-r from-rose-500 to-purple-600 text-white hover:shadow-lg animate-pulse"
                   >
                     <Ticket className="w-5 h-5 mr-2 inline" />
                     Stream Now

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Search,
@@ -15,17 +15,14 @@ import {
   Send,
   Calendar,
   DollarSign,
-  Users,
   CheckCircle,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
-import { supabase, type ServiceProvider, type ProviderBooking } from '../lib/supabase';
+import type { ServiceProvider } from '../lib/firebase';
 
 export default function OrganizeTab() {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const [providers, setProviders] = useState<ServiceProvider[]>([]);
-  const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [sortBy, setSortBy] = useState<'rating' | 'price' | 'reviews'>('rating');
@@ -47,26 +44,143 @@ export default function OrganizeTab() {
     'transport',
   ];
 
-  useEffect(() => {
-    fetchProviders();
-  }, []);
-
-  const fetchProviders = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('service_providers')
-        .select('*')
-        .eq('available', true)
-        .order('rating', { ascending: false });
-
-      if (error) throw error;
-      setProviders(data || []);
-    } catch (error) {
-      console.error('Error fetching providers:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const providers: ServiceProvider[] = [
+    {
+      id: '1',
+      name: 'Grand Hall Venues',
+      category: 'venue',
+      description: 'Premier event venues for conferences, weddings, and corporate events',
+      expertise: 'Large events, conferences, weddings',
+      base_price: 2000000,
+      rating: 4.8,
+      reviews_count: 124,
+      contact_email: 'info@grandhall.com',
+      contact_phone: '+256-700-123456',
+      portfolio_images: [],
+      available: true,
+      created_at: new Date().toISOString(),
+    },
+    {
+      id: '2',
+      name: 'Elite Tents & Decor',
+      category: 'decor',
+      description: 'Professional event decoration and tent rental services',
+      expertise: 'Weddings, gala, corporate events',
+      base_price: 450000,
+      rating: 4.7,
+      reviews_count: 78,
+      contact_email: 'elite@tents.com',
+      contact_phone: '+256-700-234567',
+      portfolio_images: [],
+      available: true,
+      created_at: new Date().toISOString(),
+    },
+    {
+      id: '3',
+      name: 'Prime Ushers',
+      category: 'ushering',
+      description: 'Trained and professional ushering staff for all event types',
+      expertise: 'Friendly, trained staff, crowd management',
+      base_price: 120000,
+      rating: 4.6,
+      reviews_count: 46,
+      contact_email: 'contact@primeushers.com',
+      contact_phone: '+256-700-345678',
+      portfolio_images: [],
+      available: true,
+      created_at: new Date().toISOString(),
+    },
+    {
+      id: '4',
+      name: 'SoundWorks Ltd',
+      category: 'audio',
+      description: 'Complete audio solutions including PA systems and mixing',
+      expertise: 'PA systems, mixing, live sound',
+      base_price: 600000,
+      rating: 4.9,
+      reviews_count: 98,
+      contact_email: 'hello@soundworks.com',
+      contact_phone: '+256-700-456789',
+      portfolio_images: [],
+      available: true,
+      created_at: new Date().toISOString(),
+    },
+    {
+      id: '5',
+      name: 'CaterPro',
+      category: 'catering',
+      description: 'Full-service catering for events of all sizes',
+      expertise: 'Buffet, plated service, dietary options',
+      base_price: 350000,
+      rating: 4.5,
+      reviews_count: 65,
+      contact_email: 'catering@caterpro.com',
+      contact_phone: '+256-700-567890',
+      portfolio_images: [],
+      available: true,
+      created_at: new Date().toISOString(),
+    },
+    {
+      id: '6',
+      name: 'LightUp Studios',
+      category: 'photography',
+      description: 'Professional event photography and videography',
+      expertise: 'Weddings, corporate events, portraits',
+      base_price: 800000,
+      rating: 4.9,
+      reviews_count: 112,
+      contact_email: 'book@lightupstudios.com',
+      contact_phone: '+256-700-678901',
+      portfolio_images: [],
+      available: true,
+      created_at: new Date().toISOString(),
+    },
+    {
+      id: '7',
+      name: 'StarDJ Entertainment',
+      category: 'entertainment',
+      description: 'DJs, MCs, and live entertainment for events',
+      expertise: 'Weddings, parties, corporate events',
+      base_price: 500000,
+      rating: 4.7,
+      reviews_count: 89,
+      contact_email: 'info@stardj.com',
+      contact_phone: '+256-700-789012',
+      portfolio_images: [],
+      available: true,
+      created_at: new Date().toISOString(),
+    },
+    {
+      id: '8',
+      name: 'SafeGuard Security',
+      category: 'security',
+      description: 'Professional event security and crowd control',
+      expertise: 'Large events, VIP protection, access control',
+      base_price: 400000,
+      rating: 4.8,
+      reviews_count: 73,
+      contact_email: 'security@safeguard.com',
+      contact_phone: '+256-700-890123',
+      portfolio_images: [],
+      available: true,
+      created_at: new Date().toISOString(),
+    },
+    {
+      id: '9',
+      name: 'RideShare Transport',
+      category: 'transport',
+      description: 'Event transportation and shuttle services',
+      expertise: 'Guest shuttles, VIP transport, logistics',
+      base_price: 300000,
+      rating: 4.6,
+      reviews_count: 54,
+      contact_email: 'ride@rideshare.com',
+      contact_phone: '+256-700-901234',
+      portfolio_images: [],
+      available: true,
+      created_at: new Date().toISOString(),
+    },
+  ];
 
   const filteredProviders = providers
     .filter((provider) => {
@@ -111,7 +225,7 @@ export default function OrganizeTab() {
 
   const totalCost = cart.reduce((sum, item) => sum + item.provider.base_price * item.quantity, 0);
 
-  const handleCheckout = async () => {
+  const handleCheckout = () => {
     if (!user) {
       alert('Please sign in to book providers.');
       navigate('/signin');
@@ -128,42 +242,14 @@ export default function OrganizeTab() {
       return;
     }
 
-    try {
-      const bookings: Omit<ProviderBooking, 'id' | 'booking_date'>[] = cart.map((item) => ({
-        provider_id: item.provider.id,
-        user_id: user.id,
-        event_id: null,
-        quantity: item.quantity,
-        total_cost: item.provider.base_price * item.quantity,
-        event_date: eventDate,
-        status: 'pending',
-        notes: eventNotes || null,
-      }));
-
-      const { error } = await supabase.from('provider_bookings').insert(bookings);
-
-      if (error) throw error;
-
-      alert(
-        `Booking successful! Total: UGX ${totalCost.toLocaleString()}\n\nProviders will contact you shortly to confirm details.`
-      );
-      setCart([]);
-      setEventDate('');
-      setEventNotes('');
-      setShowCheckout(false);
-    } catch (error) {
-      console.error('Error creating bookings:', error);
-      alert('Failed to create bookings. Please try again.');
-    }
-  };
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center py-12">
-        <div className="text-gray-300">Loading service providers...</div>
-      </div>
+    alert(
+      `Booking successful! Total: UGX ${(totalCost * 1.05).toLocaleString()}\n\nProviders will contact you shortly to confirm details.`
     );
-  }
+    setCart([]);
+    setEventDate('');
+    setEventNotes('');
+    setShowCheckout(false);
+  };
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -217,7 +303,7 @@ export default function OrganizeTab() {
                 onClick={() => setSelectedCategory(category)}
                 className={`px-4 py-2 rounded-lg font-medium whitespace-nowrap transition-all ${
                   selectedCategory === category
-                    ? 'bg-gradient-to-r from-rose-500 to-blue-600 text-white'
+                    ? 'bg-gradient-to-r from-rose-500 to-purple-600 text-white'
                     : 'glass-effect text-gray-300 hover:text-white'
                 }`}
               >
@@ -233,13 +319,13 @@ export default function OrganizeTab() {
                   <div className="flex-1">
                     <div className="flex items-center space-x-3 mb-2">
                       <h3 className="text-lg font-semibold text-white">{provider.name}</h3>
-                      <span className="px-2 py-1 bg-blue-500/20 text-blue-300 text-xs rounded-full">
+                      <span className="px-2 py-1 bg-purple-500/20 text-purple-300 text-xs rounded-full">
                         {provider.category}
                       </span>
                     </div>
                     <p className="text-gray-300 text-sm mb-3">{provider.description}</p>
                     <div className="flex items-center space-x-1 mb-2">
-                      <Award className="w-4 h-4 text-blue-400" />
+                      <Award className="w-4 h-4 text-purple-400" />
                       <span className="text-gray-300 text-sm">{provider.expertise}</span>
                     </div>
                   </div>
@@ -254,7 +340,7 @@ export default function OrganizeTab() {
                         <span className="text-gray-400 text-sm">({provider.reviews_count} reviews)</span>
                       </div>
                       {provider.reviews_count > 80 && (
-                        <div className="flex items-center space-x-1 text-blue-400">
+                        <div className="flex items-center space-x-1 text-purple-400">
                           <TrendingUp className="w-4 h-4" />
                           <span className="text-sm">Popular</span>
                         </div>
@@ -283,7 +369,7 @@ export default function OrganizeTab() {
                     </div>
                     <button
                       onClick={() => addToCart(provider)}
-                      className="px-6 py-3 bg-gradient-to-r from-rose-500 to-blue-600 text-white rounded-xl font-semibold hover:shadow-xl transition-all flex items-center space-x-2"
+                      className="px-6 py-2 bg-gradient-to-r from-rose-500 to-purple-600 text-white rounded-lg font-medium hover:shadow-lg transition-all flex items-center space-x-2"
                     >
                       <ShoppingCart className="w-4 h-4" />
                       <span>Add</span>
@@ -413,14 +499,14 @@ export default function OrganizeTab() {
                   <div className="flex space-x-2">
                     <button
                       onClick={handleCheckout}
-                      className="flex-1 px-4 py-3 bg-gradient-to-r from-rose-500 to-blue-600 text-white rounded-xl font-semibold hover:shadow-xl transition-all flex items-center justify-center space-x-2"
+                      className="flex-1 px-4 py-2 bg-gradient-to-r from-rose-500 to-purple-600 text-white rounded-lg font-medium hover:shadow-lg transition-all flex items-center justify-center space-x-2"
                     >
                       <CheckCircle className="w-5 h-5" />
                       <span>Confirm Booking</span>
                     </button>
                     <button
                       onClick={() => setShowCheckout(false)}
-                      className="px-4 py-3 glass-effect text-gray-300 rounded-xl hover:text-white transition-all"
+                      className="px-4 py-2 glass-effect text-gray-300 rounded-lg hover:text-white transition-all"
                     >
                       Cancel
                     </button>
@@ -429,15 +515,15 @@ export default function OrganizeTab() {
               ) : (
                 <button
                   onClick={() => setShowCheckout(true)}
-                  className="w-full px-4 py-3 bg-gradient-to-r from-rose-500 to-blue-600 text-white rounded-xl font-semibold hover:shadow-xl transition-all flex items-center justify-center space-x-2"
+                  className="w-full px-4 py-2 bg-gradient-to-r from-rose-500 to-purple-600 text-white rounded-lg font-medium hover:shadow-lg transition-all flex items-center justify-center space-x-2"
                 >
                   <Send className="w-5 h-5" />
                   <span>Proceed to Book</span>
                 </button>
               )}
 
-              <div className="mt-4 p-3 bg-blue-500/10 border border-blue-500/30 rounded-xl">
-                <p className="text-blue-300 text-xs leading-relaxed">
+              <div className="mt-4 p-3 bg-purple-500/10 border border-purple-500/30 rounded-xl">
+                <p className="text-purple-300 text-xs leading-relaxed">
                   <DollarSign className="w-3 h-3 inline mr-1" />
                   Providers will contact you to confirm availability and finalize details before payment.
                 </p>

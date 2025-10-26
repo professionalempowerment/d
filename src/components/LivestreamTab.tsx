@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Search, Filter, Calendar } from 'lucide-react';
-import { supabase, type Event } from '../lib/supabase';
+import type { Event } from '../lib/firebase';
 import EventCard from './EventCard';
 
 interface LivestreamTabProps {
@@ -16,8 +16,6 @@ export default function LivestreamTab({
   onSearchChange,
   onCategoryChange,
 }: LivestreamTabProps) {
-  const [events, setEvents] = useState<Event[]>([]);
-  const [loading, setLoading] = useState(true);
   const [nowTime, setNowTime] = useState(Date.now());
   const [calendarAdded, setCalendarAdded] = useState<Record<string, boolean>>({});
 
@@ -28,27 +26,29 @@ export default function LivestreamTab({
     return () => clearInterval(t);
   }, []);
 
-  useEffect(() => {
-    fetchLivestreamEvents();
-  }, []);
-
-  const fetchLivestreamEvents = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('events')
-        .select('*')
-        .eq('is_livestream', true)
-        .in('status', ['happening', 'upcoming'])
-        .order('date', { ascending: true });
-
-      if (error) throw error;
-      setEvents(data || []);
-    } catch (error) {
-      console.error('Error fetching livestream events:', error);
-    } finally {
-      setLoading(false);
+  const events: Event[] = [
+    {
+      id: '5',
+      title: 'Live Concert - Dawn Fever',
+      category: 'social',
+      date: new Date().toISOString().split('T')[0],
+      time: 'Now',
+      location: 'Main Auditorium',
+      organizer: 'LiveEvents Ltd',
+      organizer_id: null,
+      image_url: 'https://images.pexels.com/photos/1190299/pexels-photo-1190299.jpeg?auto=compress&cs=tinysrgb&w=800',
+      description: 'Never miss a beat. Attend or stream as a premium subscriber or on VIP ticket.',
+      price: 150000,
+      rating: 4.9,
+      features: ['Live Performance', 'Merch', 'Meet & Greet'],
+      speakers: ['Headline Artist'],
+      status: 'happening',
+      is_livestream: true,
+      livestream_url: 'https://stream.example.com/dawn-fever',
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
     }
-  };
+  ];
 
   const filteredEvents = events.filter((event) => {
     const matchesCategory = selectedCategory === 'all' || event.category === selectedCategory;
@@ -93,14 +93,6 @@ export default function LivestreamTab({
   const handleRegister = (eventId: string) => {
     alert('Registration functionality will be implemented with authentication.');
   };
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center py-12">
-        <div className="text-gray-300">Loading livestream events...</div>
-      </div>
-    );
-  }
 
   return (
     <>

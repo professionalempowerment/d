@@ -36,7 +36,7 @@ export default function Events() {
               onClick={() => setActiveTab(tab.id)}
               className={`flex-shrink-0 flex items-center space-x-2 px-6 py-3 rounded-lg font-medium transition-all duration-300 ${
                 activeTab === tab.id
-                  ? 'bg-gradient-to-r from-rose-500 to-blue-600 text-white shadow-lg'
+                  ? 'bg-gradient-to-r from-rose-500 to-purple-600 text-white shadow-lg'
                   : 'text-gray-300 hover:text-white hover:bg-white/10'
               }`}
             >
