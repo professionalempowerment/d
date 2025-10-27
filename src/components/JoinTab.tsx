@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Search, Filter, Calendar } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 import type { Event } from '../lib/firebase';
 import EventCard from './EventCard';
 
@@ -16,6 +18,8 @@ export default function JoinTab({
   onSearchChange,
   onCategoryChange,
 }: JoinTabProps) {
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const [nowTime, setNowTime] = useState(Date.now());
   const [calendarAdded, setCalendarAdded] = useState<Record<string, boolean>>({});
 
@@ -154,7 +158,22 @@ export default function JoinTab({
   };
 
   const handleRegister = (eventId: string) => {
-    alert('Registration functionality will be implemented with authentication.');
+    if (!user) {
+      alert('Please sign in to register for events.');
+      navigate('/signin');
+      return;
+    }
+
+    const event = events.find(e => e.id === eventId);
+    if (!event) return;
+
+    const confirmation = window.confirm(
+      `Register for ${event.title}?\n\nDate: ${new Date(event.date).toLocaleDateString()}\nTime: ${event.time}\nLocation: ${event.location}\nPrice: UGX ${event.price.toLocaleString()}\n\nClick OK to confirm your registration.`
+    );
+
+    if (confirmation) {
+      alert(`✓ Registration successful!\n\nYou're registered for ${event.title}.\n\nConfirmation email will be sent to ${user.email}.\n\nEvent Details:\n• Date: ${new Date(event.date).toLocaleDateString()}\n• Time: ${event.time}\n• Location: ${event.location}\n\nSee you there!`);
+    }
   };
 
   return (

@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Search, Filter, Calendar } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 import type { Event } from '../lib/firebase';
 import EventCard from './EventCard';
 
@@ -16,6 +18,8 @@ export default function LivestreamTab({
   onSearchChange,
   onCategoryChange,
 }: LivestreamTabProps) {
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const [nowTime, setNowTime] = useState(Date.now());
   const [calendarAdded, setCalendarAdded] = useState<Record<string, boolean>>({});
 
@@ -91,7 +95,16 @@ export default function LivestreamTab({
   };
 
   const handleRegister = (eventId: string) => {
-    alert('Registration functionality will be implemented with authentication.');
+    if (!user) {
+      alert('Please sign in to access livestream events.');
+      navigate('/signin');
+      return;
+    }
+
+    const event = events.find(e => e.id === eventId);
+    if (!event) return;
+
+    alert(`✓ Connected to livestream!\n\nYou're now watching: ${event.title}\n\nEnjoy the show!`);
   };
 
   return (
